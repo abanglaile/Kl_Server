@@ -356,6 +356,11 @@ function getUser(userName,password,callback){
     query(pool,sql,[userName,password],callback);
 }
 
+// function getUserInfo(userid,callback){
+//     var sql = "select t.group_name,g.student_name from `group_student` g,`teacher_group` t where t.stu_group_id = g.stu_group_id and g.student_id = ?";
+//     query(pool,sql,[userid],callback);
+// }
+
 function getUserName(userName,callback){
     var sql = "select a.username from user a where a.username = ?";
     query(pool,sql,[userName],callback);
@@ -1017,17 +1022,16 @@ app.post('/klmanager/login', function(req, res){   //用户名 密码 进行登�
         var result_json = JSON.parse(str);
         console.log('results:'+str);
         if(result_json.length){
-            console.log('result_json[0]:'+result_json[0]);
-            console.log('result_json[0]:'+JSON.stringify(result_json[0]));
             res.status(201).send({
                 id_token: createIdToken(result_json[0]),
                 token: createAccessToken(req.body.username,result_json[0].user_id)
-        });}
+            });
+        }
         else{
             res.status(401).send("The username or password don't match");
         }
     });
-});
+}); 
 
 app.post('/klmanager/jwtcheck', (req, res) => {    //用户携带token进行鉴权
     let token = req.headers['authorization'];

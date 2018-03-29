@@ -81,6 +81,11 @@ function getMyLadderScore(student_id, callback){
     query(pool, sql, values, callback);
 }
 
+function getStudentInfo(student_id, callback){
+    var sql = "select t.group_name,u.nickname,u.avatar from `group_student` g,`teacher_group` t,users u where t.stu_group_id = g.stu_group_id and u.id =g.student_id and g.student_id = ?";
+
+    query(pool, sql, [student_id], callback);
+}
 
 function getChapterName(chapter_id, callback){
     var sql = "select c.chaptername from chapter c where c.chapterid = ?;";
@@ -793,7 +798,16 @@ app.get('/klmanager/getExerciseSample', function(req, res) {
 //获取学生rating
 app.get('/klmanager/getStudentRating', function(req, res){
     if(req.query.student_id){
-        getStudentRating(student_id, function(results){
+        getStudentRating(req.query.student_id, function(results){
+            res.send(results[0]);
+        })
+    }
+});
+
+//获取学生个人情况信息（姓名 班级等）
+app.post('/klmanager/getStudentInfo', function(req, res){
+    if(req.body.student_id){
+        getStudentInfo(req.body.student_id, function(results){
             res.send(results[0]);
         })
     }
